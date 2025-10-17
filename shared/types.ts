@@ -40,6 +40,9 @@ export type Product = z.infer<typeof ProductSchema>;
 export const PageSchema = z.object({
   title: z.string(),
   url: z.string(),
+  description: z.string().optional(),
+  image: z.string().optional(),
+  site: z.string().optional(),
 });
 export type Page = z.infer<typeof PageSchema>;
 

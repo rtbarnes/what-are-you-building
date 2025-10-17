@@ -3,7 +3,10 @@ import express from "express";
 import { getBroadCategories } from "./llm/openai";
 import { searchProductsForCategory } from "./datasets/products";
 import { searchProductPages } from "./datasets/pages";
-import { enrichProductWithOpenGraph } from "./opengraph";
+import {
+  enrichProductWithOpenGraph,
+  enrichPageWithOpenGraph,
+} from "./opengraph";
 import {
   withNDJSONHeaders,
   writeStatus,
@@ -52,9 +55,6 @@ app.post("/api/build", async (req, res) => {
         const enrichedProduct = await enrichProductWithOpenGraph(product);
         writeProduct(res, category, enrichedProduct);
         allProducts.push({ category, product: enrichedProduct });
-
-        // Enforce minimum 200ms delay between products
-        await new Promise((resolve) => setTimeout(resolve, 200));
       }
     }
 
@@ -65,7 +65,8 @@ app.post("/api/build", async (req, res) => {
       const pages = await searchProductPages(product.id);
 
       for (const page of pages) {
-        writeProductDetail(res, product.id, page);
+        const enrichedPage = await enrichPageWithOpenGraph(page);
+        writeProductDetail(res, product.id, enrichedPage);
       }
     }
 

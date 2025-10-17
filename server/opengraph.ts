@@ -1,4 +1,4 @@
-import type { Product } from "../shared/types";
+import type { Product, Page } from "../shared/types";
 
 interface OpenGraphData {
   title?: string;
@@ -63,4 +63,20 @@ export async function enrichProductWithOpenGraph(
   }
 
   return product;
+}
+
+export async function enrichPageWithOpenGraph(page: Page): Promise<Page> {
+  try {
+    const ogData = await fetchOpenGraphData(page.url);
+
+    return {
+      ...page,
+      description: ogData.description || page.description,
+      image: ogData.image || page.image,
+      site: ogData.site || page.site,
+    };
+  } catch (error) {
+    console.error(`Failed to enrich page ${page.url}:`, error);
+    return page;
+  }
 }

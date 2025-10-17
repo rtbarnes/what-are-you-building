@@ -11,6 +11,32 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --primary: 22 110 63;
+  --primary-light: 38 189 108;
+  --primary-dark: 22 110 63;
+  --background-light: 255 255 255;
+  --background-dark: 10 13 13;
+  --gray-50: 243 246 244;
+  --gray-100: 238 241 239;
+  --gray-200: 223 225 224;
+  --gray-300: 206 209 207;
+  --gray-400: 159 161 160;
+  --gray-500: 112 115 113;
+  --gray-600: 80 83 81;
+  --gray-700: 63 65 64;
+  --gray-800: 38 40 39;
+  --gray-900: 23 26 24;
+  --gray-950: 10 13 12;
+
+  /* Spacing tokens */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 20px;
+  --space-2xl: 24px;
+  --space-3xl: 32px;
 }
 
 body,

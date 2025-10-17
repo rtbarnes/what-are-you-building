@@ -1,39 +1,39 @@
 .card {
-  background: #1b2340;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 12px;
+  background: rgb(var(--gray-800));
+  border: 1px solid rgb(var(--gray-700));
+  border-radius: var(--space-md);
+  padding: var(--space-lg);
+  margin-bottom: var(--space-md);
 }
 
 .header {
-  margin-bottom: 12px;
+  margin-bottom: var(--space-md);
 }
 
 .name {
-  margin: 0 0 8px 0;
+  margin: 0 0 var(--space-sm) 0;
   font-size: 1.1em;
   font-weight: 600;
-  color: #e6e6e6;
+  color: rgb(var(--gray-100));
 }
 
 .summary {
   margin: 0;
   font-size: 0.9em;
-  color: #8ea0c8;
+  color: rgb(var(--gray-400));
   line-height: 1.4;
 }
 
 .pages {
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding-top: 12px;
+  border-top: 1px solid rgb(var(--gray-700));
+  padding-top: var(--space-md);
 }
 
 .pagesTitle {
-  margin: 0 0 8px 0;
+  margin: 0 0 var(--space-sm) 0;
   font-size: 0.9em;
   font-weight: 500;
-  color: #a0b4d8;
+  color: rgb(var(--gray-300));
 }
 
 .pageList {
@@ -43,17 +43,17 @@
 }
 
 .pageItem {
-  margin-bottom: 6px;
+  margin-bottom: var(--space-xs);
 }
 
 .pageLink {
-  color: #2d62ff;
+  color: rgb(var(--primary));
   text-decoration: none;
   font-size: 0.9em;
   transition: color 0.2s;
 }
 
 .pageLink:hover {
-  color: #4a7cff;
+  color: rgb(var(--primary-light));
   text-decoration: underline;
 }

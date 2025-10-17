@@ -17,7 +17,7 @@ export function ResultsPanel({ products }: ResultsPanelProps) {
   }
 
   return (
-    <div className={styles.panel}>
+    <div className={styles.resultsPanel}>
       <h2 className={styles.title}>Recommended Technologies</h2>
       <div className={styles.grid}>
         {products.map(({ product, pages }) => (

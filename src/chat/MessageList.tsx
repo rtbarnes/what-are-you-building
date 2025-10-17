@@ -1,12 +1,22 @@
+import { useEffect, useRef } from "react";
 import type { ChatMessage } from "./types";
 import styles from "./MessageList.module.css";
-import { ProductCard } from "./ProductCard";
 
 type MessageListProps = {
   messages: ChatMessage[];
 };
 
 export function MessageList({ messages }: MessageListProps) {
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   return (
     <div className={styles.list}>
       {messages.map((message) => {
@@ -21,12 +31,10 @@ export function MessageList({ messages }: MessageListProps) {
             {message.content && (
               <div className={styles.bubble}>{message.content}</div>
             )}
-            {message.productCard && (
-              <ProductCard productCard={message.productCard} />
-            )}
           </div>
         );
       })}
+      <div ref={messagesEndRef} />
     </div>
   );
 }

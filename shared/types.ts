@@ -14,6 +14,7 @@ export const ProductCardSchema = z.object({
     })
   ),
 });
+export type ProductCard = z.infer<typeof ProductCardSchema>;
 
 export const ChatMessageSchema = z.object({
   id: z.string(),

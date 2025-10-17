@@ -31,13 +31,13 @@ export function MessageInput({
         disabled={disabled}
         autoFocus
       />
-      <button
+      {/* <button
         className={styles.sendButton}
         type="submit"
         disabled={disabled || !value.trim()}
       >
         Send
-      </button>
+      </button> */}
     </form>
   );
 }

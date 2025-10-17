@@ -15,15 +15,7 @@ type ProductWithPages = {
 };
 
 export default function Chat() {
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: "welcome",
-      role: "assistant",
-      content:
-        "What are you building? Describe your project and I'll help you find the right technologies.",
-      timestamp: Date.now(),
-    },
-  ]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
 
   const [input, setInput] = useState<string>("");
   const [isStreaming, setIsStreaming] = useState(false);
@@ -168,8 +160,10 @@ export default function Chat() {
           disabled={isStreaming}
         />
       </div>
-      <main className={styles.messages}>
-        <MessageList messages={messages} />
+      <main className={styles.output}>
+        <div className={styles.messagesSection}>
+          <MessageList messages={messages} />
+        </div>
         <ResultsPanel products={products} />
       </main>
     </div>

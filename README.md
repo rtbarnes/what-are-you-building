@@ -1,73 +1,104 @@
-# React + TypeScript + Vite
+# What are you building?
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An interactive assistant that turns a short project description into a streaming list of relevant technologies, key documentation links, and per-category relationship graphs.
 
-Currently, two official plugins are available:
+Front‑end is a small React app with a chat UI. Back‑end is an Express server that uses an LLM (OpenRouter) to infer high‑level categories, looks up candidate products/pages (stub datasets), enriches them with Open Graph data, and streams results to the client as NDJSON.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## React Compiler
+- Category inference via LLM and streaming status updates
+- Suggested technologies with docs previews (Open Graph enrichment)
+- Toggleable results: list view and an interactive 2D force graph
+- Typed, schema‑validated payloads shared between client and server (Zod)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+- React 19 + TypeScript
+- Express 5 (server) running with Bun
+- OpenRouter + `ai` SDK for object‑mode generation
+- `react-force-graph-2d` for graph visualization
+- Zod for runtime validation and shared types
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## How it works
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+1. The client posts `{ prompt }` to the server at `/api/build`.
+2. The server:
+   - generates broad categories from the prompt (`server/llm/openai.ts`),
+   - finds products for each category (`server/datasets/products.ts` – stub),
+   - finds pages per product (`server/datasets/pages.ts` – stub),
+   - enriches products/pages with Open Graph (`server/opengraph.ts`),
+   - builds per‑category graphs (`server/datasets/graph.ts`).
+3. Events are streamed back as NDJSON and rendered incrementally in the UI.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## API
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+POST `/api/build`
+
+Request
+
+```json
+{ "prompt": "I’m building a SaaS with subscriptions and dashboards" }
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Response stream (NDJSON). Each line is a JSON event discriminated by `type`:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```json
+{ "type": "status", "message": "Analyzing your project description..." }
+{ "type": "categories", "categories": ["frontend", "authentication", "database", "deployment"] }
+{ "type": "product", "category": "frontend", "product": { "id": "react", "name": "React", ... } }
+{ "type": "product-detail", "productId": "react", "page": { "title": "Getting Started", "url": "https://react.dev/learn" } }
+{ "type": "graph", "category": "frontend", "graph": { "nodes": [...], "links": [...] } }
+{ "type": "done" }
 ```
+
+Schemas are defined in `shared/types.ts` and used both server‑ and client‑side.
+
+## Local development
+
+Prerequisites
+
+- Bun installed (`curl -fsSL https://bun.sh/install | bash`)
+- OpenRouter API key available in your environment (e.g. `OPENROUTER_API_KEY=...`). Bun auto‑loads `.env` if present.
+
+Install dependencies
+
+```sh
+bun install
+```
+
+Run in development (frontend + server)
+
+```sh
+bun run dev
+```
+
+Or run individually
+
+```sh
+bun run dev:server   # Express on http://localhost:3000
+bun run dev:frontend # Vite dev server with /api proxy to 3000
+```
+
+Build and preview
+
+```sh
+bun run build   # typecheck + vite build
+bun run preview # vite preview
+```
+
+## Code map
+
+- `server/index.ts` — Express app, `/api/build` streaming endpoint
+- `server/llm/openai.ts` — category generation with OpenRouter in object mode
+- `server/datasets/{products,pages}.ts` — stubbed search data
+- `server/datasets/graph.ts` — per‑category graph construction
+- `server/opengraph.ts` — Open Graph enrichment for products/pages
+- `server/stream.ts` — NDJSON helpers for the streaming protocol
+- `shared/types.ts` — Zod schemas and shared TypeScript types
+- `src/chat/Chat.tsx` — chat loop, NDJSON reader, event reducer
+- `src/results/*` — `ResultsPanel`, `ProductCard`, `GraphView`
+
+## Notes
+
+- Product/page search is currently stubbed; swap in your vector/database search.
+- The frontend reads NDJSON directly using `ReadableStream` and updates state incrementally.

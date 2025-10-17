@@ -28,8 +28,21 @@ export function ResultsPanel({ products, graphs }: ResultsPanelProps) {
   }
 
   const handleGraphNodeSelect = (id: string) => {
+    // Find the current graph to get node metadata
+    const currentGraph = graphCategories[currentGraphIndex]
+      ? graphs[graphCategories[currentGraphIndex]]
+      : null;
+
+    if (!currentGraph) return;
+
+    // Find the node to get product ID
+    const node = currentGraph.nodes.find((n) => n.id === id);
+    if (!node || !node.productId) return;
+
     // Find the product by ID and scroll to it in list view
-    const productElement = document.querySelector(`[data-product-id="${id}"]`);
+    const productElement = document.querySelector(
+      `[data-product-id="${node.productId}"]`
+    );
     if (productElement) {
       productElement.scrollIntoView({ behavior: "smooth", block: "center" });
     }
@@ -74,13 +87,11 @@ export function ResultsPanel({ products, graphs }: ResultsPanelProps) {
       {view === "list" ? (
         <div className={styles.grid}>
           {products.map(({ product, pages }) => (
-            <div key={product.id} data-product-id={product.id}>
-              <ProductCard product={product} pages={pages} />
-            </div>
+            <ProductCard product={product} pages={pages} />
           ))}
         </div>
       ) : (
-        <div className={styles.graphContainer}>
+        <div className={styles.graphArea}>
           {graphCategories.length === 0 ? (
             <div className={styles.loading}>No graphs available</div>
           ) : (

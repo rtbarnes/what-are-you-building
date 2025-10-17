@@ -111,6 +111,10 @@ export type GraphNode = {
   label: string; // title or name
   score?: number; // relevance score from the main query
   group?: string; // e.g., dataset/product/page or other tagging
+  // Page-specific metadata
+  productId?: string; // ID of the product this page belongs to
+  productName?: string; // Name of the product this page belongs to
+  url?: string; // URL of the page
 };
 
 export type GraphLink = {

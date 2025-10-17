@@ -3,6 +3,7 @@ import express from "express";
 import { getBroadCategories } from "./llm/openai";
 import { searchProductsForCategory } from "./datasets/products";
 import { searchProductPages } from "./datasets/pages";
+import { enrichProductWithOpenGraph } from "./opengraph";
 import {
   withNDJSONHeaders,
   writeStatus,
@@ -35,7 +36,7 @@ app.post("/api/build", async (req, res) => {
     writeStatus(res, "Analyzing your project description...");
 
     // Phase 1: Generate categories
-    const categories = await getBroadCategories(prompt);
+    const categories = [...(await getBroadCategories(prompt)), "deployment"];
     console.log("Generated categories:", categories);
 
     writeCategories(res, categories);
@@ -48,8 +49,9 @@ app.post("/api/build", async (req, res) => {
       const products = await searchProductsForCategory(category);
 
       for (const product of products) {
-        writeProduct(res, category, product);
-        allProducts.push({ category, product });
+        const enrichedProduct = await enrichProductWithOpenGraph(product);
+        writeProduct(res, category, enrichedProduct);
+        allProducts.push({ category, product: enrichedProduct });
       }
     }
 

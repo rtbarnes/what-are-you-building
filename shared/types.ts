@@ -30,6 +30,10 @@ export const ProductSchema = z.object({
   id: z.string(),
   name: z.string(),
   summary: z.string().optional(),
+  docsUrl: z.string().optional(),
+  image: z.string().optional(),
+  description: z.string().optional(),
+  site: z.string().optional(),
 });
 export type Product = z.infer<typeof ProductSchema>;
 

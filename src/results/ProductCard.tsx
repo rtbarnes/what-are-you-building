@@ -10,8 +10,21 @@ export function ProductCard({ product, pages }: ProductCardProps) {
   return (
     <div className={styles.card}>
       <div className={styles.header}>
+        {product.image && (
+          <div className={styles.imageContainer}>
+            <img
+              src={product.image}
+              alt={product.name}
+              className={styles.image}
+            />
+          </div>
+        )}
         <h3 className={styles.name}>{product.name}</h3>
+        {product.description && (
+          <p className={styles.description}>{product.description}</p>
+        )}
         {product.summary && <p className={styles.summary}>{product.summary}</p>}
+        {product.site && <p className={styles.site}>via {product.site}</p>}
       </div>
 
       {pages.length > 0 && (

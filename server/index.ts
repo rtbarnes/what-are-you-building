@@ -52,6 +52,9 @@ app.post("/api/build", async (req, res) => {
         const enrichedProduct = await enrichProductWithOpenGraph(product);
         writeProduct(res, category, enrichedProduct);
         allProducts.push({ category, product: enrichedProduct });
+
+        // Enforce minimum 200ms delay between products
+        await new Promise((resolve) => setTimeout(resolve, 200));
       }
     }
 

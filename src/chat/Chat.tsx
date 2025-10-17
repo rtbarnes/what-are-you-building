@@ -1,6 +1,7 @@
 import { useState } from "react";
 import styles from "./Chat.module.css";
 import type { ChatMessage, Product, Page, StreamEvent } from "./types";
+import type { SearchGraph } from "../../shared/types";
 import { MessageList } from "./MessageList";
 import { MessageInput } from "./MessageInput";
 import { ResultsPanel } from "../results/ResultsPanel";
@@ -20,10 +21,12 @@ export default function Chat() {
   const [input, setInput] = useState<string>("");
   const [isStreaming, setIsStreaming] = useState(false);
   const [products, setProducts] = useState<ProductWithPages[]>([]);
+  const [graphs, setGraphs] = useState<Record<string, SearchGraph>>({});
 
   const handleStreamResponse = async (prompt: string) => {
     setIsStreaming(true);
     setProducts([]);
+    setGraphs({});
 
     try {
       const response = await fetch("http://localhost:3000/api/build", {
@@ -126,6 +129,14 @@ export default function Chat() {
         );
         break;
 
+      case "graph":
+        // Add graph for category
+        setGraphs((prev) => ({
+          ...prev,
+          [event.category]: event.graph,
+        }));
+        break;
+
       case "done":
         // Stream complete
         break;
@@ -165,7 +176,7 @@ export default function Chat() {
         <div className={styles.messagesSection}>
           <MessageList messages={messages} />
         </div>
-        <ResultsPanel products={products} />
+        <ResultsPanel products={products} graphs={graphs} />
       </main>
     </div>
   );

@@ -34,6 +34,10 @@ export function writeProductDetail(
   writeEvent(res, { type: "product-detail", productId, page });
 }
 
+export function writeGraph(res: Response, category: string, graph: any): void {
+  writeEvent(res, { type: "graph", category, graph });
+}
+
 export function writeDone(res: Response): void {
   writeEvent(res, { type: "done" });
 }

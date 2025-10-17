@@ -13,14 +13,69 @@ import {
   writeCategories,
   writeProduct,
   writeProductDetail,
+  writeGraph,
   writeDone,
 } from "./stream";
-import { BuildRequestSchema } from "../shared/types";
+import {
+  BuildRequestSchema,
+  SearchGraph,
+  GraphNode,
+  GraphLink,
+} from "../shared/types";
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+// Helper function to generate graph for a category
+async function generateCategoryGraph(
+  category: string,
+  products: any[],
+  neighborsNum: number = 5
+): Promise<SearchGraph> {
+  const nodes: GraphNode[] = products.map((product) => ({
+    id: product.id,
+    label: product.name,
+    score: Math.random(), // Simulated relevance score
+    group: category,
+  }));
+
+  // Create links based on simulated similarity within category
+  const links: GraphLink[] = [];
+  const nodeIds = new Set(nodes.map((n) => n.id));
+
+  for (const node of nodes) {
+    const similarNodes = nodes
+      .filter((n) => n.id !== node.id)
+      .slice(0, neighborsNum);
+
+    for (const similarNode of similarNodes) {
+      if (nodeIds.has(similarNode.id)) {
+        links.push({
+          source: node.id,
+          target: similarNode.id,
+          weight: Math.random(),
+        });
+      }
+    }
+  }
+
+  // Deduplicate links
+  const uniqueLinks = links.filter(
+    (link, index, arr) =>
+      arr.findIndex(
+        (l) =>
+          (l.source === link.source && l.target === link.target) ||
+          (l.source === link.target && l.target === link.source)
+      ) === index
+  );
+
+  return {
+    nodes,
+    links: uniqueLinks,
+  };
+}
 
 app.get("/", (_req, res) => {
   res.send("OK");
@@ -55,6 +110,12 @@ app.post("/api/build", async (req, res) => {
         const enrichedProduct = await enrichProductWithOpenGraph(product);
         writeProduct(res, category, enrichedProduct);
         allProducts.push({ category, product: enrichedProduct });
+      }
+
+      // Generate and stream graph for this category
+      if (products.length > 0) {
+        const categoryGraph = await generateCategoryGraph(category, products);
+        writeGraph(res, category, categoryGraph);
       }
     }
 

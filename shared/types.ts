@@ -67,6 +67,27 @@ export const StreamEventSchema = z.discriminatedUnion("type", [
     page: PageSchema,
   }),
   z.object({
+    type: z.literal("graph"),
+    category: z.string(),
+    graph: z.object({
+      nodes: z.array(
+        z.object({
+          id: z.string(),
+          label: z.string(),
+          score: z.number().optional(),
+          group: z.string().optional(),
+        })
+      ),
+      links: z.array(
+        z.object({
+          source: z.string(),
+          target: z.string(),
+          weight: z.number().optional(),
+        })
+      ),
+    }),
+  }),
+  z.object({
     type: z.literal("done"),
   }),
 ]);
@@ -83,3 +104,22 @@ export const CategoriesResponseSchema = z.object({
   categories: z.array(z.string()),
 });
 export type CategoriesResponse = z.infer<typeof CategoriesResponseSchema>;
+
+// Graph visualization types
+export type GraphNode = {
+  id: string; // result id
+  label: string; // title or name
+  score?: number; // relevance score from the main query
+  group?: string; // e.g., dataset/product/page or other tagging
+};
+
+export type GraphLink = {
+  source: string; // node id
+  target: string; // node id
+  weight?: number; // similarity score
+};
+
+export type SearchGraph = {
+  nodes: GraphNode[];
+  links: GraphLink[];
+};

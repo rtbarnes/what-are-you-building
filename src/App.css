@@ -1,0 +1,4 @@
+/* Reset to allow chat to take full height */
+#root {
+  height: 100vh;
+}

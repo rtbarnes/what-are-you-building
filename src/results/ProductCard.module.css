@@ -1,0 +1,59 @@
+.card {
+  background: #1b2340;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.header {
+  margin-bottom: 12px;
+}
+
+.name {
+  margin: 0 0 8px 0;
+  font-size: 1.1em;
+  font-weight: 600;
+  color: #e6e6e6;
+}
+
+.summary {
+  margin: 0;
+  font-size: 0.9em;
+  color: #8ea0c8;
+  line-height: 1.4;
+}
+
+.pages {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 12px;
+}
+
+.pagesTitle {
+  margin: 0 0 8px 0;
+  font-size: 0.9em;
+  font-weight: 500;
+  color: #a0b4d8;
+}
+
+.pageList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pageItem {
+  margin-bottom: 6px;
+}
+
+.pageLink {
+  color: #2d62ff;
+  text-decoration: none;
+  font-size: 0.9em;
+  transition: color 0.2s;
+}
+
+.pageLink:hover {
+  color: #4a7cff;
+  text-decoration: underline;
+}

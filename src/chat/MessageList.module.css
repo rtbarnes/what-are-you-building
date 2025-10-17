@@ -1,0 +1,38 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 20px;
+}
+
+.message {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.user {
+  align-items: flex-end;
+}
+
+.assistant {
+  align-items: flex-start;
+}
+
+.bubble {
+  max-width: 80ch;
+  padding: 16px 20px;
+  border-radius: 18px;
+  line-height: 1.5;
+  background: rgba(27, 35, 64, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  font-size: 15px;
+}
+
+.user .bubble {
+  background: rgba(36, 87, 214, 0.8);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: white;
+}

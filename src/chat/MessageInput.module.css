@@ -1,0 +1,47 @@
+.inputBar {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  background: rgba(11, 16, 32, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.textInput {
+  height: 48px;
+  padding: 0 16px;
+  background: transparent;
+  border: none;
+  border-radius: 12px;
+  color: #e6e6e6;
+  font-size: 16px;
+  outline: none;
+}
+
+.textInput::placeholder {
+  color: #8ea0c8;
+}
+
+.sendButton {
+  height: 48px;
+  padding: 0 20px;
+  border-radius: 12px;
+  background: #2d62ff;
+  color: white;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.sendButton:hover:not(:disabled) {
+  background: #1e4ed8;
+}
+
+.sendButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

@@ -1,4 +1,5 @@
 import styles from "./MessageInput.module.css";
+import { useCyclingPlaceholder } from "./useCyclingPlaceholder";
 
 type MessageInputProps = {
   value: string;
@@ -13,6 +14,8 @@ export function MessageInput({
   onSubmit,
   disabled,
 }: MessageInputProps) {
+  const placeholder = useCyclingPlaceholder(2000);
+
   return (
     <form
       className={styles.inputBar}
@@ -25,7 +28,7 @@ export function MessageInput({
       <input
         className={styles.textInput}
         type="text"
-        placeholder="Type a message..."
+        placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}

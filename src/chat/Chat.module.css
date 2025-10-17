@@ -5,6 +5,7 @@
   background: rgb(var(--background-dark));
   color: rgb(var(--gray-100));
   position: relative;
+  min-height: 100vh;
 }
 
 .header {
@@ -16,13 +17,14 @@
 }
 
 .inputSection {
+  align-self: center;
   flex: 0 0 100px;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: var(--space-lg);
   max-width: 60%;
-  margin: 0 auto;
+  width: 400px;
 }
 
 .output {

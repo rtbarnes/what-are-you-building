@@ -1,14 +1,46 @@
-import type { Product } from "../../shared/types";
+import type {
+  Embedding,
+  ProductEmbedding,
+  Product,
+  SearchProductsResponse,
+} from "../../shared/types";
 
-// Stub implementation - will be replaced with vector search
+const SEARCH_SERVER_URL =
+  process.env.SEARCH_SERVER_URL || "http://localhost:4000";
+
 export async function searchProductsForCategory(
   category: string
 ): Promise<Product[]> {
-  // Simulate async search
-  await new Promise((resolve) =>
-    setTimeout(resolve, 200 + Math.random() * 300)
-  );
+  try {
+    const response = await fetch(
+      `${SEARCH_SERVER_URL}/search-products?q=${encodeURIComponent(
+        category
+      )}&limit=2`
+    );
 
+    if (!response.ok) {
+      console.error(
+        `Search server error: ${response.status} ${response.statusText}`
+      );
+      return getFallbackProducts(category);
+    }
+
+    const responseBody: SearchProductsResponse = await response.json();
+
+    // Transform search results to Product format
+    return responseBody.results.map((result: ProductEmbedding) => ({
+      id: result.subdomain,
+      name: result.subdomain,
+      summary: result.summary,
+      docsUrl: `https://${result.subdomain}.mintlify.app/${result.path}`,
+    }));
+  } catch (error) {
+    console.error("Failed to fetch products from search server:", error);
+    return getFallbackProducts(category);
+  }
+}
+
+function getFallbackProducts(category: string): Product[] {
   const productMap: Record<string, Product[]> = {
     frontend: [
       {

@@ -1,12 +1,35 @@
-import type { Page } from "../../shared/types";
+import type { Embedding, Page, SearchPagesResponse } from "../../shared/types";
 
-// Stub implementation - will be replaced with vector search
+const SEARCH_SERVER_URL =
+  process.env.SEARCH_SERVER_URL || "http://localhost:4000";
+
 export async function searchProductPages(productId: string): Promise<Page[]> {
-  // Simulate async search
-  await new Promise((resolve) =>
-    setTimeout(resolve, 150 + Math.random() * 200)
-  );
+  try {
+    const response = await fetch(
+      `${SEARCH_SERVER_URL}/search?q=${encodeURIComponent(productId)}&limit=2`
+    );
 
+    if (!response.ok) {
+      console.error(
+        `Search server error: ${response.status} ${response.statusText}`
+      );
+      return getFallbackPages(productId);
+    }
+
+    const responseBody: SearchPagesResponse = await response.json();
+
+    // Transform search results to Page format
+    return responseBody.results.map((result: Embedding) => ({
+      title: result.subdomain,
+      url: `${result.customDomain}/${result.path}`,
+    }));
+  } catch (error) {
+    console.error("Failed to fetch pages from search server:", error);
+    return getFallbackPages(productId);
+  }
+}
+
+function getFallbackPages(productId: string): Page[] {
   const pageMap: Record<string, Page[]> = {
     react: [
       { title: "Getting Started", url: "https://react.dev/learn" },

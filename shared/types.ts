@@ -1,5 +1,28 @@
 import { z } from "zod";
 
+export type SearchProductsResponse = {
+  query: string;
+  results: ProductEmbedding[];
+  total: number;
+};
+
+export type SearchPagesResponse = {
+  query: string;
+  results: Embedding[];
+  total: number;
+};
+
+export type Embedding = {
+  subdomain: string;
+  customDomain: string;
+  path: string;
+  distance: number;
+};
+
+export type ProductEmbedding = Embedding & {
+  summary: string;
+};
+
 // Chat message types
 export const ChatRoleSchema = z.enum(["user", "assistant"]);
 export type ChatRole = z.infer<typeof ChatRoleSchema>;

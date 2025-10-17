@@ -18,6 +18,7 @@ import {
 } from "./stream";
 import { BuildRequestSchema } from "../shared/types";
 import { generateCategoryGraph } from "./datasets/graph";
+import path from "path";
 
 const app = express();
 

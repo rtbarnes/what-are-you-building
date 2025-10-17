@@ -7,7 +7,10 @@
     "dev:frontend": "vite",
     "dev:server": "bun --hot server/index.ts",
     "dev": "concurrently \"bun run dev:frontend\" \"bun run dev:server\" --names \"frontend,server\" --prefix-colors \"cyan,magenta\"",
-    "build": "tsc -b && vite build",
+    "build": "bun run build:server && bun run build:client",
+    "build:server": "bun build server/index.ts --outdir dist --target bun",
+    "build:client": "vite build",
+    "start": "NODE_ENV=production bun run server/index.ts",
     "lint": "eslint .",
     "preview": "vite preview"
   },

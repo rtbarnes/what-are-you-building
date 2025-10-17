@@ -38,7 +38,7 @@ export async function fetchOpenGraphData(url: string): Promise<OpenGraphData> {
     return {
       title: ogTitleMatch?.[1],
       description: ogDescriptionMatch?.[1],
-      image: ogImageMatch?.[1],
+      image: ogImageMatch?.[1]?.replaceAll("amp;", ""),
       site: ogSiteMatch?.[1],
     };
   } catch (error) {

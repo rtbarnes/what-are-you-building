@@ -33,6 +33,7 @@ export default function Chat() {
         },
         body: JSON.stringify({ prompt }),
       });
+      console.log("Response:", response);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -92,15 +93,15 @@ export default function Chat() {
         setMessages((prev) => [...prev, statusMessage]);
         break;
 
-      case "category":
-        // Add category search message
-        const categoryMessage: ChatMessage = {
+      case "categories":
+        // Add categories message
+        const categoriesMessage: ChatMessage = {
           id: createId(),
           role: "assistant",
-          content: `Searching for "${event.category}"...`,
+          content: `Your project might need: ${event.categories.join(", ")}`,
           timestamp: Date.now(),
         };
-        setMessages((prev) => [...prev, categoryMessage]);
+        setMessages((prev) => [...prev, categoriesMessage]);
         break;
 
       case "product":

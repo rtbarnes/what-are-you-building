@@ -14,8 +14,8 @@ export function writeStatus(res: Response, message: string): void {
   writeEvent(res, { type: "status", message });
 }
 
-export function writeCategory(res: Response, category: string): void {
-  writeEvent(res, { type: "category", category });
+export function writeCategories(res: Response, categories: string[]): void {
+  writeEvent(res, { type: "categories", categories });
 }
 
 export function writeProduct(

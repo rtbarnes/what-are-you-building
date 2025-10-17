@@ -6,7 +6,7 @@ import { searchProductPages } from "./datasets/pages";
 import {
   withNDJSONHeaders,
   writeStatus,
-  writeCategory,
+  writeCategories,
   writeProduct,
   writeProductDetail,
   writeDone,
@@ -27,6 +27,7 @@ app.get("/health", (_req, res) => {
 });
 
 app.post("/api/build", async (req, res) => {
+  console.log("Received request:", req.body);
   try {
     const { prompt } = BuildRequestSchema.parse(req.body);
     withNDJSONHeaders(res);
@@ -35,14 +36,15 @@ app.post("/api/build", async (req, res) => {
 
     // Phase 1: Generate categories
     const categories = await getBroadCategories(prompt);
+    console.log("Generated categories:", categories);
 
+    writeCategories(res, categories);
     writeStatus(res, "Searching for relevant technologies...");
 
     // Phase 2: Search products for each category
     const allProducts: Array<{ category: string; product: any }> = [];
 
     for (const category of categories) {
-      writeCategory(res, category);
       const products = await searchProductsForCategory(category);
 
       for (const product of products) {
@@ -65,7 +67,6 @@ app.post("/api/build", async (req, res) => {
     writeDone(res);
     res.end();
   } catch (error) {
-    console.error("Error in /api/build:", error);
     if (!res.headersSent) {
       if (error instanceof Error && error.name === "ZodError") {
         res.status(400).json({ error: "Invalid request format" });

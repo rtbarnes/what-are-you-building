@@ -6,7 +6,7 @@
   "scripts": {
     "dev:frontend": "vite",
     "dev:server": "bun --hot server/index.ts",
-    "dev:concurrent": "concurrently \"bun run dev:frontend\" \"bun run dev:server\" --names \"frontend,server\" --prefix-colors \"cyan,magenta\"",
+    "dev": "concurrently \"bun run dev:frontend\" \"bun run dev:server\" --names \"frontend,server\" --prefix-colors \"cyan,magenta\"",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"

@@ -46,8 +46,8 @@ export const StreamEventSchema = z.discriminatedUnion("type", [
     message: z.string(),
   }),
   z.object({
-    type: z.literal("category"),
-    category: z.string(),
+    type: z.literal("categories"),
+    categories: z.array(z.string()),
   }),
   z.object({
     type: z.literal("product"),

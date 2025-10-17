@@ -20,7 +20,9 @@ export type Embedding = {
 };
 
 export type ProductEmbedding = Embedding & {
+  name: string;
   summary: string;
+  customerPageFilepaths: string[];
 };
 
 // Chat message types

@@ -1,13 +1,14 @@
 import type { Product, Page } from "../shared/types";
 
 interface OpenGraphData {
-  title?: string;
-  description?: string;
-  image?: string;
-  site?: string;
+  title: string;
+  description: string;
+  image: string;
+  site: string;
 }
 
 export async function fetchOpenGraphData(url: string): Promise<OpenGraphData> {
+  console.log("Fetching OpenGraph data for:", url);
   try {
     const response = await fetch(url, {
       headers: {
@@ -36,14 +37,19 @@ export async function fetchOpenGraphData(url: string): Promise<OpenGraphData> {
     );
 
     return {
-      title: ogTitleMatch?.[1],
-      description: ogDescriptionMatch?.[1],
-      image: ogImageMatch?.[1]?.replaceAll("amp;", ""),
-      site: ogSiteMatch?.[1],
+      title: ogTitleMatch?.[1] ?? "",
+      description: ogDescriptionMatch?.[1] ?? "",
+      image: ogImageMatch?.[1]?.replaceAll("amp;", "") ?? "",
+      site: ogSiteMatch?.[1] ?? "",
     };
   } catch (error) {
     console.error(`Failed to fetch OpenGraph data for ${url}:`, error);
-    return {};
+    return {
+      title: "",
+      description: "",
+      image: "",
+      site: "",
+    };
   }
 }
 

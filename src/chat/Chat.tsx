@@ -119,6 +119,7 @@ export default function Chat() {
         break;
 
       case "product-detail":
+        console.log("Product detail:", event.page);
         // Add page to existing product
         setProducts((prev) =>
           prev.map((p) =>

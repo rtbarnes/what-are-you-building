@@ -1,11 +1,12 @@
 import cors from "cors";
 import express from "express";
-import { getBroadCategories } from "./llm/openai";
+import { getBroadCategories, getRelevantPageURLs } from "./llm/openai";
 import { searchProductsForCategory } from "./datasets/products";
 import { searchProductPages } from "./datasets/pages";
 import {
   enrichProductWithOpenGraph,
   enrichPageWithOpenGraph,
+  fetchOpenGraphData,
 } from "./opengraph";
 import {
   withNDJSONHeaders,
@@ -51,57 +52,44 @@ app.post("/api/build", async (req, res) => {
     // Phase 2: Search products for each category
     const allProducts: Array<{ category: string; product: any }> = [];
 
-    for (const category of categories) {
-      const products = await searchProductsForCategory(category);
+    await Promise.all(
+      categories.map(async (category) => {
+        const products = await searchProductsForCategory(category);
 
-      for (const product of products) {
-        const enrichedProduct = await enrichProductWithOpenGraph(product);
-        writeProduct(res, category, enrichedProduct);
-        allProducts.push({ category, product: enrichedProduct });
-      }
-    }
+        console.log("Products:", products);
+
+        // Parallelize enrichment of products
+        const enrichedProducts = await Promise.all(
+          products.map((product) => enrichProductWithOpenGraph(product))
+        );
+        for (const enrichedProduct of enrichedProducts) {
+          writeProduct(res, category, enrichedProduct);
+          allProducts.push({ category, product: enrichedProduct });
+        }
+      })
+    );
 
     writeStatus(res, "Finding detailed resources...");
 
-    // Phase 3: Search pages for each product and collect by category
-    const productsWithPagesByCategory: Record<
-      string,
-      Array<{ product: any; pages: any[] }>
-    > = {};
-
-    for (const { category, product } of allProducts) {
-      const pages = await searchProductPages(product.id);
-      const enrichedPages: any[] = [];
-
-      for (const page of pages) {
-        const enrichedPage = await enrichPageWithOpenGraph(page);
-        writeProductDetail(res, product.id, enrichedPage);
-        enrichedPages.push(enrichedPage);
-      }
-
-      // Group products with their pages by category
-      if (!productsWithPagesByCategory[category]) {
-        productsWithPagesByCategory[category] = [];
-      }
-      productsWithPagesByCategory[category].push({
-        product,
-        pages: enrichedPages,
-      });
-    }
-
-    // Phase 4: Generate and stream graphs for each category
-    writeStatus(res, "Generating relationship graphs...");
-    for (const [category, productsWithPages] of Object.entries(
-      productsWithPagesByCategory
-    )) {
-      if (productsWithPages.length > 0) {
-        const categoryGraph = await generateCategoryGraph(
-          category,
-          productsWithPages
+    await Promise.all(
+      allProducts.map(async (product) => {
+        // console.log("Getting relevant pages for:", product.product);
+        const relevantPageURLs = await getRelevantPageURLs(
+          prompt,
+          product.product.customerPageFilepaths
         );
-        writeGraph(res, category, categoryGraph);
-      }
-    }
+        console.log("Relevant pages:", relevantPageURLs);
+
+        await Promise.all(
+          relevantPageURLs.map(async (url) => {
+            writeProductDetail(res, product.product.id, {
+              url,
+              ...(await fetchOpenGraphData(url)),
+            });
+          })
+        );
+      })
+    );
 
     writeDone(res);
     res.end();

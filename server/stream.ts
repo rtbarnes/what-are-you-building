@@ -1,4 +1,5 @@
 import { Response } from "express";
+import { Page } from "../shared/types";
 
 export function withNDJSONHeaders(res: Response): void {
   res.setHeader("Content-Type", "application/x-ndjson");
@@ -29,7 +30,7 @@ export function writeProduct(
 export function writeProductDetail(
   res: Response,
   productId: string,
-  page: any
+  page: Page
 ): void {
   writeEvent(res, { type: "product-detail", productId, page });
 }

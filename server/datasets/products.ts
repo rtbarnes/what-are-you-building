@@ -30,9 +30,10 @@ export async function searchProductsForCategory(
     // Transform search results to Product format
     return responseBody.results.map((result: ProductEmbedding) => ({
       id: result.subdomain,
-      name: result.subdomain,
+      name: result.name,
       summary: result.summary,
       docsUrl: `https://${result.subdomain}.mintlify.app/${result.path}`,
+      customerPageFilepaths: result.customerPageFilepaths,
     }));
   } catch (error) {
     console.error("Failed to fetch products from search server:", error);

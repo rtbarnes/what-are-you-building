@@ -14,7 +14,7 @@ const sillyOptions = [
 ];
 
 export function useCyclingPlaceholder(
-  intervalMs: number = 2000,
+  intervalMs: number = 3000,
   typewriterSpeed: number = 50
 ) {
   const [currentIndex, setCurrentIndex] = useState(0);

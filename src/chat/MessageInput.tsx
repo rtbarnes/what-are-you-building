@@ -14,7 +14,7 @@ export function MessageInput({
   onSubmit,
   disabled,
 }: MessageInputProps) {
-  const placeholder = useCyclingPlaceholder(2000);
+  const placeholder = useCyclingPlaceholder();
 
   return (
     <form
